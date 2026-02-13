@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management System - Carousel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .carousel-container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .carousel-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .carousel-header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .slide-indicator {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .carousel-content {
+            position: relative;
+            height: 500px;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            position: relative;
+        }
+
+        /* Slide Styles */
+        .slide h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .slide h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button[type="submit"],
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        button[type="submit"]:hover,
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            text-align: center;
+        }
+
+        .demo-hint {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border: 1px solid #bee5eb;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .demo-hint code {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Dashboard Slide */
+        .dashboard-content {
+            text-align: center;
+        }
+
+        .dashboard-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .dashboard-info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .employee-list {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: left;
+            border-left: 4px solid #667eea;
+        }
+
+        .employee-list strong {
+            color: #667eea;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 2px solid #eee;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-nav {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-nav:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress-info {
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 6px;
+            background: #ddd;
+            border-radius: 3px;
+            margin: 0 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .carousel-content {
+                height: auto;
+                min-height: 600px;
+            }
+
+            .slide {
+                padding: 30px 20px;
+            }
+
+            .carousel-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-buttons {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .btn-nav {
+                width: 100%;
+            }
+
+            .progress-info {
+                text-align: center;
+            }
+
+            .progress-bar {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel-container">
+        <!-- Header -->
+        <div class="carousel-header">
+            <h1>Employee Management System</h1>
+            <div class="slide-indicator">
+                <span id="currentSlide">1</span> / <span id="totalSlides">4</span>
+            </div>
+        </div>
+
+        <!-- Carousel Content -->
+        <div class="carousel-content">
+            <!-- Slide 1: Login -->
+            <div class="slide active" id="slide1">
+                <h2>Admin Login</h2>
+                <form onsubmit="loginSubmit(event)">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" placeholder="Enter username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Login</button>
+                </form>
+                <div class="demo-hint">
+                    <p><strong>Demo Credentials:</strong></p>
+                    <p>Username: <code>admin</code> | Password: <code>admin</code></p>
+                </div>
+            </div>
+
+            <!-- Slide 2: Dashboard -->
+            <div class="slide" id="slide2">
+                <div class="dashboard-content">
+                    <h2>Employee Dashboard</h2>
+                    <div class="dashboard-info">
+                        <h3>📊 Current Employees</h3>
+                        <div class="employee-list">
+                            <strong>Employee 1:</strong> John Doe - Engineering - $75,000
+                        </div>
+                        <div class="employee-list">
+                            <strong>Employee 2:</strong> Jane Smith - HR - $65,000
+                        </div>
+                        <div class="employee-list">
+                            <strong>Employee 3:</strong> Mike Johnson - Sales - $60,000
+                        </div>
+                        <p style="margin-top: 15px; text-align: center; color: #666;">
+                            Use the carousel to navigate and perform actions
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Add Employee -->
+            <div class="slide" id="slide3">
+                <h2>Add New Employee</h2>
+                <form onsubmit="addEmployeeSubmit(event)">
+                    <div class="form-group">
+                        <label for="empName">Employee Name:</label>
+                        <input type="text" id="empName" name="name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="empEmail">Email:</label>
+                        <input type="email" id="empEmail" name="email" placeholder="john@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="empDept">Department:</label>
+                        <input type="text" id="empDept" name="department" placeholder="Engineering" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="empSalary">Salary:</label>
+                        <input type="number" id="empSalary" name="salary" placeholder="50000" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Save Employee</button>
+                </form>
+            </div>
+
+            <!-- Slide 4: Edit Employee -->
+            <div class="slide" id="slide4">
+                <h2>Edit Employee</h2>
+                <form onsubmit="editEmployeeSubmit(event)">
+                    <div class="form-group">
+                        <label for="editId">Employee ID:</label>
+                        <input type="number" id="editId" name="id" placeholder="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editName">Employee Name:</label>
+                        <input type="text" id="editName" name="name" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email:</label>
+                        <input type="email" id="editEmail" name="email" placeholder="john@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDept">Department:</label>
+                        <input type="text" id="editDept" name="department" placeholder="Engineering" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editSalary">Salary:</label>
+                        <input type="number" id="editSalary" name="salary" placeholder="50000" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Update Employee</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="carousel-controls">
+            <div class="nav-buttons">
+                <button class="btn-nav" id="prevBtn" onclick="prevSlide()">← Back</button>
+                <button class="btn-nav" id="nextBtn" onclick="nextSlide()">Next →</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="progress-info" id="slideInfo">Slide 1 of 4</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 4;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            
+            // Hide all slides
+            slides.forEach(slide => slide.classList.remove('active'));
+            
+            // Show current slide
+            if (slides[n - 1]) {
+                slides[n - 1].classList.add('active');
+            }
+
+            // Update indicators
+            document.getElementById('currentSlide').textContent = n;
+            document.getElementById('slideInfo').textContent = `Slide ${n} of ${totalSlides}`;
+
+            // Update progress bar
+            const progress = (n / totalSlides) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Update button states
+            document.getElementById('prevBtn').disabled = (n === 1);
+            document.getElementById('nextBtn').disabled = (n === totalSlides);
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        function loginSubmit(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'admin' && password === 'admin') {
+                alert('✓ Login successful! Moving to Dashboard...');
+                currentSlide = 2;
+                showSlide(currentSlide);
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            } else {
+                alert('✗ Invalid credentials! Please use admin/admin');
+            }
+        }
+
+        function addEmployeeSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('empName').value;
+            const email = document.getElementById('empEmail').value;
+            alert(`✓ Employee "${name}" added successfully!`);
+            
+            // Reset form
+            event.target.reset();
+        }
+
+        function editEmployeeSubmit(event) {
+            event.preventDefault();
+            const name = document.getElementById('editName').value;
+            alert(`✓ Employee "${name}" updated successfully!`);
+            
+            // Reset form
+            event.target.reset();
+        }
+
+        // Initialize
+        showSlide(currentSlide);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'ArrowRight') nextSlide();
+        });
+    </script>
+</body>
+</html>
